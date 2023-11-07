@@ -1,0 +1,79 @@
+устанавливаем ansible
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt-get update
+sudo apt-get install ansible
+
+Создаем inventory.ini
+вводим туда ip виртуальной машины 192.168.56.4
+
+Создаем ansible.cfg
+заполняем файл
+[defaults]
+#путь к файлу
+inventory = /home/stas/learning/vagrant/2.3/inventory.ini
+#имя пользователя для ssh(ssh vagrant@192.168.56.4)
+remote_user = vagrant
+#приватный ключ своего компьютера
+private_key_file = /home/stas/learning/vagrant/2.1/stas
+#чтобы Ansible не запрашивал подтверждение при первом соединении с новыми хостами
+host_key_checking = False
+
+проверяем работает ли
+ansible -i inventory.ini -m ping all
+
+создаем плейбук
+и заполняем его согласно заданию
+---
+- name: task2.3
+  hosts: all
+  #Делаем доступ судо
+  become: yes
+  tasks:
+    - name: Update
+      apt:
+        name: '*'
+        state: latest
+
+    - name: Nginx
+      apt:
+        name: 'nginx'
+        state: latest
+
+    - name: Create User
+      user:
+        name: Vasya
+        state: present
+        createhome: yes
+        shell: /bin/bash
+
+    - name: SSH
+      authorized_key:
+        user: Vasya
+        key: "{{ lookup('file', '/home/stas/learning/vagrant/2.1/stas.pub') }}"
+        state: present
+
+    - name: TimeFile
+      template:
+        src: time.j2
+        dest: /home/time.txt
+        # создаем файл time.j2 c следующим содержанием Создано: {{ ansible_date_time.date }} в {{ ansible_date_time.time }}
+
+      # устанавливаем дополнительное по.
+    - name: mysql
+      apt:
+        name: mysql-server
+        state: latest
+        
+    - name: cleaning files
+      cron:
+        name: "clean"
+        job: "find /tmp/ -type f -mtime +3 -exec rm -f {} \\;"
+        state: present
+            # Делаем очистку временных файлов каждых 3 дня
+...
+
+
+запускаем плейбук 
+ansible-playbook my.yml 
+
+Была большая беда с пробелами, помог разобраться visual studio code

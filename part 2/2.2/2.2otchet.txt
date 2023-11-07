@@ -1,0 +1,78 @@
+Создаем файл вагрант
+vagrant init -m bento/ubuntu-20.04
+настраеваем файл
+прописываем скрипт для первой машины
+$script = <<~SCRIPT
+  echo Installing Nginx
+  apt-get install -y nginx
+
+  echo Installing PHP
+  apt-get install -y php-fpm php-mysql 
+SCRIPT
+#настройки самой машины
+Vagrant.configure(2) do |config|
+  
+  config.vm.box = "bento/ubuntu-20.04"
+  config.vm.box_check_update = false
+
+  #Первая виртуальная машина
+  config.vm.define "m1" do |m1|
+    #имя виртуальной машины и количество памяти и процессоров
+    m1.vm.provider "virtualbox" do |vb|
+      vb.name = "m1"
+    vb.memory = 1024
+    vb.cpus = 1
+    
+
+    end
+    #hostname виртуальной машины
+    m1.vm.hostname = "m1"
+    #настройки сети
+    m1.vm.network "private_network", type: "bridge", bridge: "wlp2s0", ip: "192.168.56.2"
+    #запускаем скрипт по установке ПО
+    config.vm.provision "shell", inline: $script
+  end
+
+#скрипт для второй машины
+$script2 = <<~SCRIPT
+  echo Installing MySQL
+  apt-get install -y mysql-server
+
+  echo Installing PHP
+  apt-get install -y php-fpm php-mysql
+SCRIPT
+
+
+  #Вторая машина, настройка имени и количества памяти и процессоров
+  config.vm.define "m2" do |m2|  
+ m2.vm.provider "virtualbox" do |vb|
+      vb.name = "m2"
+      vb.memory = 2048
+      vb.cpus = 2
+     
+    end
+    #имя, настройки сети и запуск установки ПО
+    m2.vm.hostname = "m2"
+    m2.vm.network "private_network", type: "bridge", bridge: "wlp2s0", ip: "192.168.56.3"
+    m2.vm.provision "shell", inline: $script2 
+
+    
+  end
+  
+ Обновление машин
+  config.vm.provision "update", type: "shell", inline: "apt-get update"
+end
+
+vagrant up
+
+заходим на первую машину
+ssh vagrant@192.168.56.2 -p 22
+вводим пароль
+пингуем вторую машину
+ping 192.168.56.3
+работает
+пингуем google.com
+работает
+повторяем все с второй машиной.
+тоже работает)
+

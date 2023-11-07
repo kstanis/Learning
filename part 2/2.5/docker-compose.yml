@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  webapp:
+    build: ./app  # Путь к каталогу, содержащему Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - database
+    environment:
+      - DATABASE_URL=mysql://root:password@database/mydb
+
+  database:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydb

@@ -1,0 +1,45 @@
+---
+- name: task2.3
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update
+      apt:
+        name: '*'
+        state: latest
+
+    - name: Nginx
+      apt:
+        name: 'nginx'
+        state: latest
+
+    - name: Create User
+      user:
+        name: Vasya
+        state: present
+        createhome: yes
+        shell: /bin/bash
+
+    - name: SSH
+      authorized_key:
+        user: Vasya
+        key: "{{ lookup('file', '/home/stas/learning/vagrant/2.1/stas.pub') }}"
+        state: present
+
+    - name: TimeFile
+      template:
+        src: time.j2
+        dest: /home/time.txt
+
+    - name: mysql
+      apt:
+        name: mysql-server
+        state: latest
+
+    - name: cleaning files
+      cron:
+        name: "clean"
+        job: "find /tmp/ -type f -mtime +3 -exec rm -f {} \\;"
+        state: present
+
+...

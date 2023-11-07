@@ -1,0 +1,79 @@
+
+
+
+
+
+
+
+
+
+
+
+
+Vagrant.configure(2) do |config|
+  
+  config.vm.box = "ubuntu/focal64"
+  config.vm.box_check_update = false
+  #config.vm.network "public_network", type: "bridge", bridge: "wlp2s0", ip: "192.168.56.0"
+  #config.vm.network "forwarded_port", guest: 80, host: 8080
+  $script = <<~SCRIPT
+    
+    
+    sudo apt-get update
+    sudo apt-get install -y apache2
+    sudo systemctl start apache2
+    sudo apt-get install -y php libapache2-mod-php php-mysql
+    sudo apt-get install -y php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip
+    cd /var/www/html
+    sudo wget -c http://wordpress.org/latest.tar.gz
+    sudo tar -xzvf latest.tar.gz
+    sudo chown -R www-data:www-data /var/www/html/wordpress
+  
+    echo "ho kurva!"
+
+  SCRIPT
+  # ПЕРВАЯ ВИРТУАЛЬНАЯ МАШИНА
+  config.vm.define "m1" do |m1|
+    # имя виртуальной машины
+    m1.vm.provider "virtualbox" do |vb|
+      vb.name = "m1"
+      vb.memory = 1024
+      vb.cpus = 1
+    
+
+    end
+    # hostname виртуальной машины
+    m1.vm.hostname = "m1"
+    # настройки сети
+    m1.vm.network "private_network", type: "bridge", bridge: "wlp2s0", ip: "192.168.56.2"
+    
+    config.vm.provision "shell", inline: $script
+  end
+
+
+    $script2 = <<~SCRIPT
+      echo Installing MySQL
+      apt-get install -y mysql-server
+    SCRIPT
+
+
+   #ВТОРАЯ ВИРТУАЛЬНАЯ МАШИНА
+  config.vm.define "m2" do |m2|  
+    m2.vm.provider "virtualbox" do |vb|
+      vb.name = "m2"
+      vb.memory = 2048
+      vb.cpus = 2
+     
+    end
+    
+    m2.vm.hostname = "m2"
+  
+    m2.vm.network "private_network", type: "bridge", bridge: "wlp2s0", ip: "192.168.56.3"
+    m2.vm.provision "shell", inline: $script2 
+
+    
+  end
+  
+ 
+  config.vm.provision "update", type: "shell", inline: "apt-get update"
+end

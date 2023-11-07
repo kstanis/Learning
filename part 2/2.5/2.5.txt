@@ -1,0 +1,48 @@
+за основу берем задание 2.4
+создаем docker-compose.yml
+version: '3'
+
+services: # раздел где находятся все контейнеры
+  webapp: #первый контенер
+    build: ./app  # Путь к каталогу, содержащему Dockerfile, создаем контенер
+    ports:
+      - "5000:5000" # прописываем порты
+    volumes: # создаем связь между папками с приложениями в хостовой системе и контенером, помогает синхронизировать файлы.
+      - ./app:/app
+    depends_on: # зависимость первого контенера от базы данных(гарантирует запуск сначало базы)
+      - database
+    environment:
+      - DATABASE_URL=mysql://root:password@database/mydb
+
+  database: # второй контенер
+    image: mysql:5.7 #установка базы
+    environment:
+      MYSQL_ROOT_PASSWORD: password #пароль для пользователя рут
+      MYSQL_DATABASE: mydb #название базы данных
+
+docker-compose up
+машины запущенны, веб браузер показывает надпись из приложения
+для проверки взаимодействи машин заходи на первую машину(web)
+docker exec -it 137bba6426c8 sh
+
+пробуем перейти на базу данных
+mysql -u root -p -h database
+после ввода пароля переходим на вторую машину mysql
+проверяем создание базы данных
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mydb               |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.00 sec)
+
+останавливаем и вновь запускаем машины с помошью команд:
+docker-compose down
+docker-compose up
+
+все к счатью работает)

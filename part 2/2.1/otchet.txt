@@ -1,0 +1,74 @@
+Создаем директорию 
+mkdir 
+Создаем вагрант файл
+vagrant init -m bento/ubuntu-20.04
+заполняем вагрант файл
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-20.04"
+  
+ # config.ssh.username = 'v'
+  # пароль пользователя
+ # config.ssh.password = 'v'
+  # можно подключаться по паролю
+ # config.ssh.keys_only = false
+
+config.vm.provision "update", type: "shell", inline: "apt-get update"
+config.vm.provision "netstat", type: "shell", inline: "echo Installing netstat; apt-get install -y net-tools"
+config.vm.provision "nginx", type: "shell", inline: "echo Installing Nginx; apt-get install -y nginx"
+  
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+  
+ config.vm.provider "virtualbox" do |vb|
+    # имя виртуальной машины
+    vb.name = "ubuntu2004"
+    # объем оперативной памяти
+    vb.memory = 2048
+    # количество ядер процессора
+    vb.cpus = 1
+  end
+
+end
+
+
+ vagrant up
+ 
+ ssh-keygen 
+ копируем ключь
+ cat stas.pub
+ заходим на виртуальную машину
+ ssh -p2222 vagrant@127.0.0.1
+ переходим в папку ssh
+ cd .ssh/
+ добавляем публичный ключь
+ nano authorized_keys 
+ выходим из машины 
+ exit
+ проверяем отзывается ли nginx на виртуальной машине
+ curl 127.0.0.1:80
+ получаем ответ
+ <!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+все работает!)
