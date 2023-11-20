@@ -31,9 +31,11 @@
 # 4) Coздание 2-х публичных инстансов в разных сетях и учтановка nginx.
 
 1-ый
+
 ![image](Pictures/pub_instance1.png)
 
 2-ой
+
 ![image](Pictures/pub_instance2.png)
 
 ## Теперь создаем для публичных сетей internet gateways & route tables
@@ -51,7 +53,7 @@
 ## Подключаемся к публичным инстансам, устанавливаем nginx и заходим через браузер по ip адресу.
 
 ![image](Pictures/connect_public_inst.png)
-![image](connect_pPictures/ub_browser.png)
+![image](Pictures/connect_pub_browser.png)
 
 # 5) ЕLB
 
