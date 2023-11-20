@@ -120,7 +120,7 @@
 
 Добавляем Security group в RDS
 
-![image](add_sedyrityG_for RDS.png)
+![image](add_sedyrityG_for_RDS.png)
 
 Подключаемся к публичному инстансу с помошью команды "ssh -i "keypair.pem" ubuntu@51.20.134.229"
 Ставим клиента postgres с помошью команды "sudo apt-get install postgressql-client"
@@ -132,7 +132,7 @@
 Проверяем возможность подключения с локальной машины
 Ставим клиента postgres и подключаемся.
 
-![image](cconnect_to_postgres_LM.png)
+![image](connect_to_postgres_LM.png)
 
 Подключение не удалось.
 
