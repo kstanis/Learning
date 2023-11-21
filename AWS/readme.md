@@ -215,3 +215,81 @@ done
 по истечению 180 дней удалять файлы из глейсера
 
 ![image](Pictures/rule2.png)
+
+
+# Часть 3 — Работа с контейнерами
+
+## 1) У нас уже существуют 2 инстанса
+
+## 2) С группой web-sg в которую добавлен мой ип
+
+## 3) Добавляем в web-sg порт 8080
+
+![image](Pictures/add8080.png)
+
+устанавливаем jenkins c помошью скрипта
+
+```sudo apt-get update
+sudo apt-get install openjdk-17-jdk
+sudo apt-get update
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update
+sudo apt-get install jenkins
+```
+## 4) ssh подключение к Jenkins истансу
+
+Переходим в папку .ssh и генерируем ключи с помошью команды
+```
+ssh-keygen -t rsa -b 2048
+```
+Берем публичный код и копируем его в Staging инстанс в 
+```
+.ssh/authorized_keys
+```
+Добавляем новое правило в web-sg для подключения Jenkins inst к Staging inst
+
+добавляем публичный ип Jenkins inst  с маской 32
+
+![image](Pictures/ssh_staging.png)
+
+Пробуем подключиться к Staging inst
+
+![image](Pictures/connect_toStag.png)
+
+Подключение прошло успешно
+
+## 5) Установка Docker на Staging instance 
+
+Устанавливаем Докер с помошью следующих команд
+```
+#качивание скрипта установки Docker 
+
+curl -fsSL https://get.docker.com -o get-docker.sh
+
+#установка Docker
+
+sudo sh get-docker.sh
+
+#добавляем пользователя ubuntu в группу Docker
+
+sudo usermod -aG docker ubuntu
+
+```
+
+## 6) Запустил sudo docker run hello-world в Staging instance. 
+
+## 7) Создал репозиторий в GitHub. Положить в него Jenkinsfile.
+Добавил в дженкинс файл скрипт из методички
+прописал ип 
+```
+STAGE_INSTANCE = "ubuntu@16.171.144.230"
+``` 
+
+## Создаем item и запускаем
+
+![image](Pictures/cjenkins_item.png)
+
