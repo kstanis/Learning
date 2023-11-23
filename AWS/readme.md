@@ -219,11 +219,11 @@ done
 
 # Часть 3 — Работа с контейнерами
 
-## 1) У нас уже существуют 2 инстанса
+## 1) Cоздаем 2 инстанса
 
-## 2) С группой web-sg в которую добавлен мой ип
+## 2) Создаем секьюрити группую
 
-## 3) Добавляем в web-sg порт 8080
+## 3) Добавляем в секьюрити группу порт 8080
 
 ![image](Pictures/add8080.png)
 
@@ -242,19 +242,14 @@ sudo apt-get install jenkins
 ```
 ## 4) ssh подключение к Jenkins истансу
 
-Переходим в папку .ssh и генерируем ключи с помошью команды
+Переходим в пользователся jenkins, переходим в домашнюю директорию
 ```
-ssh-keygen -t rsa -b 2048
+ssh-keygen -t jenkins_лун -b 2048
 ```
 Берем публичный код и копируем его в Staging инстанс в 
 ```
 .ssh/authorized_keys
 ```
-Добавляем новое правило в web-sg для подключения Jenkins inst к Staging inst
-
-добавляем публичный ип Jenkins inst  с маской 32
-
-![image](Pictures/ssh_staging.png)
 
 Пробуем подключиться к Staging inst
 
@@ -274,7 +269,7 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 
 sudo sh get-docker.sh
 
-#добавляем пользователя ubuntu в группу Docker
+#добавляем пользователя Docker в группу ubuntu
 
 sudo usermod -aG docker ubuntu
 
@@ -282,14 +277,15 @@ sudo usermod -aG docker ubuntu
 
 ## 6) Запустил sudo docker run hello-world в Staging instance. 
 
-## 7) Создал репозиторий в GitHub. Положить в него Jenkinsfile.
-Добавил в дженкинс файл скрипт из методички
-прописал ип 
-```
-STAGE_INSTANCE = "ubuntu@16.171.144.230"
-``` 
+## 7) Создал репозиторий в GitHub. Положил в него Jenkinsfile.
+
+Добавил в дженкинс файл скрипт
+
 
 ## Создаем item и запускаем
 
-![image](Pictures/cjenkins_item.png)
+![image](Pictures/jenkins_item.png)
 
+![image](Pictures/RABOTAET.png)
+
+Видим долгожданный вывод!)
